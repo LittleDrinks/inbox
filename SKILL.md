@@ -65,7 +65,7 @@ metadata:
 | 小红书抓取 | `profiles/xiaohongshu.md`（含 opencli 调用细节） |
 | B站/微信/X 抓取 | `opencli <site>`，见各 profile |
 
-## 交付形态（全分支统一）
+## 交付形态
 
 目录 `$INBOX_DIR/webclip/`（md）。论文 PDF 入文献管理器（见 adapters/paper-store.md），inbox 不存 PDF。
 命名 `YYYY-MM-DD-webclip-<平台>-<主题>.md`。
@@ -89,13 +89,11 @@ title: "<原标题>"
 
 - inbox/webclip 堆积 → 按主题归并合集（TOPICS 关键词分组，每条保留标题+来源+核心+链接）；同一笔记存在裸 explore/短链/带 token 三种 url 形态，去重按标题核心词匹配。合集 = 过渡形态，recall 消化后合集与原料一起删
 - 堆积的根因是没被 recall。取（recall）产物落 digest/ 后，同主题原料即删，digest 汇总即权威版本
-- digest 本身堆积 → 按主题跨日期合并（如「科研绘图与论文写作」合并 09-22/09-24/10-06 三期），每主题只保留一篇权威版，旧版删除
+- digest 本身堆积 → 按主题跨日期合并，每主题只保留一篇权威版，旧版删除
 
 ## 取（recall）
 
 1. **先查 `inbox/digest/` 缓存**有没有现成汇总产物（如 `2026-10-07-digest-科研绘图与论文写作.md`），命中就基于它回答
 2. 缓存未命中再检索存量：grep inbox 全区（webclip/digest）frontmatter 的 type/title + 桌面历史报告；用概念词（配色/pipeline/读论文），少用平台词
-3. 汇总成决策层产物：主推放最前；HEX/命令等原始数据内联；每条带来源文件路径；存货没有的部分明说
-4. 产物落 `inbox/digest/YYYY-MM-DD-digest-<主题>.md`，成为下次取的缓存层；对应原料（如已内联的色卡原帖）随之删除
-
-输出形态按场景定：改图 → 场景→色卡映射表；选工具 → 梯队表+首推+理由；找方法 → 步骤清单。
+3. 汇总成决策层产物：结论先行；原始数据（HEX/命令/链接）内联；每条带来源文件路径；存货没有的部分明说
+4. 产物落 `inbox/digest/YYYY-MM-DD-digest-<主题>.md`，成为下次取的缓存层；对应原料随之删除

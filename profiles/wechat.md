@@ -2,9 +2,9 @@
 
 触发：`mp.weixin.qq.com/s/`。识别出论文 → 叠加 paper-pdf profile。
 
-## 主路（2026-09-17 起，curl 直抓已失效）
+## 主路
 
-文章页改 JS 渲染，curl 拿到 3MB JS 外壳（换 UA 也一样）。可用路径是复用用户 Chrome 会话的 opencli，**必须关图片下载**：
+文章页 JS 渲染，curl 拿到 3MB JS 外壳（换 UA 也一样）。可用路径是复用用户 Chrome 会话的 opencli，**必须关图片下载**：
 
 ```bash
 opencli weixin download --url "https://mp.weixin.qq.com/s/<id>" \
@@ -13,14 +13,14 @@ opencli weixin download --url "https://mp.weixin.qq.com/s/<id>" \
 
 输出 `{title, author, publish_time, status, size, saved}`，`saved` 是现成 md 路径。「点击下方原文」是平台话术，引用以提取出的纯 URL 为准。
 
-## 备用：curl 直抓（旧格式文章仍可用）
+## 备用：curl 直抓
 
 ```bash
 curl -sL -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0 Safari/537.36" \
   "https://mp.weixin.qq.com/s/<id>" -o /tmp/wx/<id>.html
 ```
 
-HTML 要点（2026 实测）：整页 2-4MB，图片 base64 内嵌；标题 `<h1 id="activity-name">`；正文 `<div id="js_content">`。
+HTML 要点：整页 2-4MB，图片 base64 内嵌；标题 `<h1 id="activity-name">`；正文 `<div id="js_content">`。
 
 ## 解析骨架（curl 路径用）
 

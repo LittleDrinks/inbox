@@ -18,7 +18,7 @@ cd <图片目录>/
 ~/.kimi-code/bin/kimi -p "请读取当前目录下的图片 <filename>（用你的图片读取工具），完整转录全部文字，逐段不漏，岗位要求、数据、链接、命令等原文细节全部保留。用中文输出，跳过排版和颜色描述。"
 ```
 
-- 转录 prompt 必须写死"完整转录逐段不漏"——默认行为是挑重点，实测 4 段只回 1 段且看不出丢
+- 转录 prompt 必须写死"完整转录逐段不漏"——默认行为是挑重点，会丢段且看不出丢
 - 多图一次点名并行读（`img1.jpg、img2.jpg…`），kimi 会放大核对遮挡区域；每图需不同 prompt 才退回 for 循环；单图 20-60s
 - **清理 reasoning 前缀**：stdout 是「英文 reasoning 段 + 空行 + 中文转录段」，从含 ≥20 个 CJK 字符的第一个块开始保留，砍行首 `• `；噪声图全块 CJK <20 时保留全文人判
 - 输出尾部 `To resume this session: kimi -r <id>` 是噪声；同图两次运行可能一次成功一次只回 20 字节残片，`wc -c` 进程结束后再看
@@ -39,7 +39,7 @@ result, _ = engine("/path/img.png")   # [[box, text, score], ...]
 text = "\n".join(item[1] for item in result) if result else ""
 ```
 
-- ~1.1s/张（202 张 4.5 分钟），中文准确率高（群名/引用/内嵌小字全对）；Windows.Media.Ocr 实测错字多+GBK 乱码
+- ~1.1s/张，中文准确率高（群名/引用/内嵌小字全对）；Windows.Media.Ocr 错字多+GBK 乱码
 - 批量循环输出目录每次用新的，复用旧 DST + 跳过已存在 = 新旧错配
 - **语料级逐字提取只用 RapidOCR**：kimi 会语义补全污染语料；存行级 JSON（含 box 坐标）；可疑形近字（干/千、Al/AI、l/1）在原稿标注"疑为"并保留原文
 - 双引擎兜底：RapidOCR 与主引擎输出做覆盖率比对（归一化标点后逐行查子串），立刻暴露漏行/改写
@@ -60,7 +60,7 @@ python3.12 -c "from pptx import Presentation; prs=Presentation('f.pptx'); [open(
 - OCR 只用 >30000 字节的全分辨率图（缩略图会诱发模型臆造无关内容）
 - WebP 伪装 .jpg：`file x.jpg` 显示 RIFF/WebP → `PIL Image.open(f).convert('RGB').save(png)` 转真 PNG
 - 读出的 URL 验证后才写进 md；不可读段落标注存疑
-- **声称来源某论文的绘图帖，配图可能与论文不符**（2026-08-22 实测 CLIP-Backdoor 帖配图实为 MCD-Net/FlashCache）：prompt 显式要求核对图中内容与声称论文是否一致；不符 → 标注"⚠️ 配图与论文不符"，图仅作配色/排版参考，核心信息以论文本体为准（走 paper-pdf），不按论文内容脑补图片描述
+- **声称来源某论文的绘图帖，配图可能与论文不符**：prompt 显式要求核对图中内容与声称论文是否一致；不符 → 标注"⚠️ 配图与论文不符"，图仅作配色/排版参考，核心信息以论文本体为准（走 paper-pdf），不按论文内容脑补图片描述
 
 ## 场景出口
 

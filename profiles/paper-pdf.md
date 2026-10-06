@@ -15,7 +15,7 @@
 
 ## OpenReview 403 破解
 
-2026 年中起 OpenReview 加 Cloudflare challenge：curl/pdf/attachment 全 403，Referer/Origin 无效。**唯一可行路径：opencli 真实浏览器会话过 challenge → 页面上下文 fetch → 分块 base64 取回。**
+OpenReview 有 Cloudflare challenge：curl/pdf/attachment 全 403，Referer/Origin 无效。**唯一可行路径：opencli 真实浏览器会话过 challenge → 页面上下文 fetch → 分块 base64 取回。**
 
 ```bash
 # 1. 打开 pdf 页（真实 Chrome 能过 challenge）

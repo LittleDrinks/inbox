@@ -10,7 +10,7 @@
 ffmpeg -i input.mp4 -vn -acodec pcm_s16le -ar 16000 -ac 1 audio.wav
 zh2text audio.wav          # sherpa-onnx + SenseVoice int8；wrapper 在 ~/.local/bin/zh2text
 ```
-   - **音频超过 ~10 分钟必须先切段**，否则 SenseVoice 注意力按 T² 吃内存（45 分钟整文件实测要 32GB 直接 OOM，返回空结果）：`ffmpeg -i audio.wav -f segment -segment_time 300 -ar 16000 -ac 1 -acodec pcm_s16le seg/%03d.wav`，再 `zh2text seg/*.wav`（单进程加载一次模型、逐文件出 `<wav>: <文本>` 行）
+   - **音频超过 ~10 分钟必须先切段**，否则 SenseVoice 注意力按 T² 吃内存直接 OOM 返回空结果：`ffmpeg -i audio.wav -f segment -segment_time 300 -ar 16000 -ac 1 -acodec pcm_s16le seg/%03d.wav`，再 `zh2text seg/*.wav`（单进程加载一次模型、逐文件出 `<wav>: <文本>` 行）
    - wrapper/模型缺失或损坏时的重建参数：模型 `~/.cache/sherpa-onnx/sherpa-onnx-sense-voice-zh-en-ja-ko-yue-int8-2024-07-17/`（229MB），脚本 `~/.cache/sherpa-onnx/transcribe.py`（整文件解码、无 VAD、不切段），走 `~/.local/share/uv/tools/sherpa-onnx/bin/python`（uv tool install 需 `--with click`；1.13.x 无 CLI，走 Python API + 标准库 wave）
    - **视频可能没有音轨**：ffmpeg 报 `Output file does not contain any stream` = 只有视频流；`ffprobe -show_entries stream=codec_type` 确认后转抽帧 + desc 正文补内容
 3. **抽帧联系表**：
@@ -27,7 +27,7 @@ ffmpeg -pattern_type glob -i "frames/*.jpg" -filter_complex "tile=4x6:padding=4:
 
 vision_analyze / kimi 读联系表 + 字幕文本 → md。多段 MP4 逐一 ffprobe 盘点、逐一分析（各段可能是不同内容）；关键信息处 `-ss` 局部加密抽帧复查。
 
-**抽帧单独足够**（2026-08-22 实测，whisper 缺位时同样成立）：3 条视频仅靠 19-20 帧联系表（fps = 20/时长）完整提取全部内容——128s 视频读出 GitHub star 数（60.1k）和命令数，19.2s 视频库名/网址/推文原文完整可读。帧里的小字 kimi 会放大核对，scale=540 即可：
+**抽帧单独足够**：3 条视频仅靠 19-20 帧联系表（fps = 20/时长）完整提取全部内容——128s 视频读出 GitHub star 数（60.1k）和命令数，19.2s 视频库名/网址/推文原文完整可读。帧里的小字 kimi 会放大核对，scale=540 即可：
 
 ```bash
 ffmpeg -y -v error -i input.mp4 -vf "fps=0.15,scale=540:-2" -q:v 2 frames/f%04d.jpg   # 128s → 19 帧
