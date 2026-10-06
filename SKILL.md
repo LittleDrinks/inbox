@@ -1,8 +1,8 @@
 ---
 name: inbox
-description: "喂与取 two-verb inbox router. 喂/capture: user drops 小红书/微信/B站/X links, papers, or screenshots saying 收藏/放进inbox → load profiles/<site|medium>.md → one md in E:\\OBSIDIAN\\inbox\\webclip\\. 取/recall: user wants to USE stored stuff (选配色/改图/选工具/找方法) → answer only from inbox stock with source paths; digests land in inbox\\digest\\."
+description: "喂与取 two-verb inbox router. 喂/capture: user drops 小红书/微信/B站/X links, papers, or screenshots saying 收藏/放进inbox → load profiles/<site|medium>.md → one md in $OBSIDIAN_INBOX/webclip/. 取/recall: user wants to USE stored stuff (选配色/改图/选工具/找方法) → answer only from inbox stock with source paths; digests land in digest/."
 version: 3.1.0
-author: q2635
+author: user
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -56,7 +56,7 @@ metadata:
 
 ## 交付形态（全分支统一）
 
-目录 `/mnt/e/OBSIDIAN/inbox/webclip/`（md）。论文 PDF 直接入 Zotero（zotero-cli import，inbox 不存 PDF）。
+目录 `$OBSIDIAN_INBOX/webclip/`（md）。论文 PDF 直接入 Zotero（zotero-cli import，inbox 不存 PDF）。
 命名 `YYYY-MM-DD-webclip-<平台>-<主题>.md`。
 文件头：
 ```markdown

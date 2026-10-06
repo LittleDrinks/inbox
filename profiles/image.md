@@ -1,6 +1,6 @@
 # 图片 profile
 
-触发：本地截图/图片路径（`/mnt/...`、`E:\...`、微信 temp 转存 `E:\xwechat_files\<wxid>\temp\RWTemp\<YYYY-MM>\`）。
+触发：本地截图/图片路径（`$OBSIDIAN_INBOX/...`、`E:\...`、微信 temp 转存路径）。
 
 ## 路由
 
