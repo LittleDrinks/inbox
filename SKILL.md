@@ -1,6 +1,6 @@
 ---
 name: inbox
-description: "喂与取 two-verb inbox router. 喂/capture: user drops 小红书/微信/B站/X links, papers, or screenshots saying 收藏/放进inbox → load profiles/<site|medium>.md → one md in $INBOX_DIR/webclip/. 取/recall: user wants to USE stored stuff (选配色/改图/选工具/找方法) → answer only from inbox stock with source paths; digests land in digest/."
+description: "把用户丢的链接/截图/文字存进本地 inbox 目录（小红书/微信/B站/X/论文/图片/视频各一个 profile），之后用户要用时从存量里检索汇总成 digest。用户说\"收藏/放进 inbox\"时触发喂，说\"帮我找/选/用之前存的\"时触发取。"
 version: 3.2.0
 author: user
 license: MIT
