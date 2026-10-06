@@ -14,7 +14,7 @@
 - **xsec_token 与 noteId 绑定**，跨笔记互借触发 SECURITY_BLOCK（小红书风控）
 - **首选**：短链 HTML 里挖 `grep -oE 'xsec_token=[A-Za-z0-9_-]+'`（4/4 全通）。token 有两种写法：`"CB...="` 和 `CB...%3D`，两个正则都跑，喂 opencli 时 `=` 编码成 `%3D`
 - search 返回的 token 仅用于验证标题/noteId（跨页使用触发 SECURITY_BLOCK）
-- 历史 md 里的 token 长期有效：`grep -oE 'explore/[0-9a-f]+\?xsec_token=[^ )]*' $OBSIDIAN_INBOX/webclip/*.md`
+- 历史 md 里的 token 长期有效：`grep -oE 'explore/[0-9a-f]+\?xsec_token=[^ )]*' $INBOX_DIR/webclip/*.md`
 
 ## 标题（多来源交叉）
 
