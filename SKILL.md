@@ -47,8 +47,8 @@ metadata:
 ## 消化与 digest 硬规则
 
 - **Wikipedia 句式**：每条 = 名称 + 一句话定义（输入→输出 / 解决什么 / 覆盖什么），句号结尾。禁过渡词（"这个主题下""值得注意的是""总的来说"）、禁连接词（"互补""配合"）、禁额外解读（"这意味着""本质是"）。条与条之间就是换行。
-- **xhs 链接必须带 xsec_token**：裸 `explore/<noteId>` 会被风控弹到通用页。写完 digest 后必须自查裸链——`grep -oE 'xiaohongshu\.com/explore/[0-9a-f]{24}[^?]' <file>` 命中即为事故。token 丢失时用 `opencli xiaohongshu search <标题关键词> --window background -f json` 按 noteId 匹配找回；搜不到标注 `[链接已失效]`。
-- **进 inbox 即标类型**：过眼即焚（营销号/工具推送）消化后只留一手来源（GitHub/arXiv/官网），xhs 链接不留；未来要查（prompt 模板/色卡/清单）内联进 digest 且附 xhs 原链。
+- **链接有效性自查**：写完 digest 后检查所有链接是否可打开。平台特有的校验规则见各 adapter（如 `adapters/xiaohongshu.md` 的 xsec_token 自查）。
+- **进 inbox 即标类型**：过眼即焚（营销号/工具推送）消化后只留一手来源（GitHub/arXiv/官网），原始平台链接不留；未来要查（prompt 模板/色卡/清单）内联进 digest 且附原始平台链接。
 - **评论爬取**：仅两类必爬——评论区给出一手链接（GitHub 等）的笔记、求助帖（"xxx 背景求指导"，评论是精华）。其他默认不爬，用户明说才爬。
 - **消化后删原料**：digest 内联了原料的，原料 md 即删。digest 汇总即权威版本，不留指针回已删原料。
 

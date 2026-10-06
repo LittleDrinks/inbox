@@ -17,5 +17,6 @@
 
 - xsec_token 与 noteId 一对一绑定，跨笔记借用触发 SECURITY_BLOCK
 - 裸 `explore/<noteId>` 无 token 在网页端显示"找不到帖子"
+- 写完 digest 后必须自查裸链：`grep -oE 'xiaohongshu\.com/explore/[0-9a-f]{24}[^?]' <file>` 命中即为事故。token 丢失时用 `opencli xiaohongshu search <标题关键词> --window background -f json` 按 noteId 匹配找回；搜不到标注 `[链接已失效]`
 - 签名图片 URL 会过期，须即时下载
 - 同笔记换文案重发时 noteId 不变，查重以 noteId 为准
