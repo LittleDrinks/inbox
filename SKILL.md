@@ -13,14 +13,12 @@ metadata:
 
 # inbox：喂与取
 
-组织动作归 agent 不归用户；存货靠 recall 浮上来才有价值；回答只来自存货并给出处，没有就说没有。本文件只做判动词与路由，每个来源一个 profile。
-
 ## 判动词
 
 | 用户行为 | 动词 |
 |---|---|
-| 丢链接/截图/文字，说"收藏/放进 inbox/处理一下" | **喂**（capture） |
-| 说要"用"：改图选配色、选工具、找读论文方法、写论文找素材 | **取**（recall） |
+| 丢链接/截图/文字，说"收藏/放进 inbox/处理一下" | **喂** |
+| 说要"用"：改图选配色、选工具、找读论文方法、写论文找素材 | **取** |
 
 ## 喂 → 路由表
 
@@ -34,9 +32,9 @@ metadata:
 | `b23.tv`、`bilibili.com/video/BV` | `profiles/bilibili.md` | video |
 | arXiv/ACL/OpenReview/HF 链接或论文标题 | `profiles/paper-pdf.md` | — |
 | 本地截图/图片路径 | `profiles/image.md` | — |
-| 视频文件/视频链接（任意来源） | `profiles/video.md` | 来源 profile 在前 |
+| 视频文件/视频链接 | `profiles/video.md` | 来源 profile 在前 |
 
-## 通用规则（所有分支）
+## 通用规则
 
 - **paste 链**：用户连贴多次时 paste 文件互相引用（`Pasted text #N → file`），顺链追到底；说"全部"就全量，只说当前 N 条就只处理消息里的。
 - **事实分层**：区分"内容实际展示" vs "标题/文案称" vs "推断"。
@@ -62,12 +60,12 @@ metadata:
 | 扫描版/公式 PDF → markdown | `adapters/pdf-scanned.md` |
 | 音频/视频 → 文本 | `adapters/transcribe.md` |
 | 论文 → 文献管理器 | `adapters/paper-store.md` |
-| 小红书抓取 | `profiles/xiaohongshu.md`（含 opencli 调用细节） |
+| 小红书抓取 | `profiles/xiaohongshu.md` |
 | B站/微信/X 抓取 | `opencli <site>`，见各 profile |
 
 ## 交付形态
 
-目录 `$INBOX_DIR/webclip/`（md）。论文 PDF 入文献管理器（见 adapters/paper-store.md），inbox 不存 PDF。
+目录 `$INBOX_DIR/webclip/`。论文 PDF 入文献管理器（见 adapters/paper-store.md），inbox 不存 PDF。
 命名 `YYYY-MM-DD-webclip-<平台>-<主题>.md`。
 文件头：
 ```markdown
@@ -87,13 +85,13 @@ title: "<原标题>"
 
 ## 堆积治理（喂出来的东西堆积时）
 
-- inbox/webclip 堆积 → 按主题归并合集（TOPICS 关键词分组，每条保留标题+来源+核心+链接）；同一笔记存在裸 explore/短链/带 token 三种 url 形态，去重按标题核心词匹配。合集 = 过渡形态，recall 消化后合集与原料一起删
-- 堆积的根因是没被 recall。取（recall）产物落 digest/ 后，同主题原料即删，digest 汇总即权威版本
+- inbox/webclip 堆积 → 按主题归并合集（TOPICS 关键词分组，每条保留标题+来源+核心+链接）；同一笔记存在裸 explore/短链/带 token 三种 url 形态，去重按标题核心词匹配。合集 = 过渡形态，取消化后合集与原料一起删
+- 堆积的根因是没被取。取消化产物写入 digest/ 后，同主题原料即删，digest 汇总即权威版本
 - digest 本身堆积 → 按主题跨日期合并，每主题只保留一篇权威版，旧版删除
 
-## 取（recall）
+## 取
 
 1. **先查 `inbox/digest/` 缓存**有没有现成汇总产物（如 `2026-10-07-digest-科研绘图与论文写作.md`），命中就基于它回答
 2. 缓存未命中再检索存量：grep inbox 全区（webclip/digest）frontmatter 的 type/title + 桌面历史报告；用概念词（配色/pipeline/读论文），少用平台词
 3. 汇总成决策层产物：结论先行；原始数据（HEX/命令/链接）内联；每条带来源文件路径；存货没有的部分明说
-4. 产物落 `inbox/digest/YYYY-MM-DD-digest-<主题>.md`，成为下次取的缓存层；对应原料随之删除
+4. 产物写入 `inbox/digest/YYYY-MM-DD-digest-<主题>.md`，成为下次取的缓存层；对应原料随之删除
