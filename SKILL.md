@@ -52,22 +52,22 @@ metadata:
 - **评论爬取**：仅两类必爬——评论区给出一手链接（GitHub 等）的笔记、求助帖（"xxx 背景求指导"，评论是精华）。其他默认不爬，用户明说才爬。
 - **消化后删原料**：digest 内联了原料的，原料 md 即删。digest 汇总即权威版本，不留指针回已删原料。
 
-## 依赖工具
+## 依赖
 
-| 场景 | 工具 | 备注 |
-|---|---|---|
-| 数字版 PDF 提取 | `opendataloader-pdf`（odl-pdf skill） | 默认路径 |
-| 扫描版/公式/长文档 PDF | Logics-Parsing V3（vlm-pdf-extraction skill） | odl 失败时升级 |
-| 音频/视频转录 | `whisper`（OpenAI Whisper，本地 GPU） | whisper skill |
-| 小红书抓取 | `opencli xiaohongshu` | 需 xsec_token，见 profiles/xiaohongshu.md |
-| B站抓取 | `opencli bilibili` | |
-| X/Twitter 抓取 | `opencli twitter` | |
-| 微信文章抓取 | `opencli wechat` | |
-| 论文入库 | `zotero-cli import` | inbox 不存 PDF |
+每个依赖一个适配器文件（`adapters/`），定义契约和默认实现。换工具只改适配器文件，本文件不动。
+
+| 场景 | 适配器 |
+|---|---|
+| 数字版 PDF → markdown | `adapters/pdf-digital.md` |
+| 扫描版/公式 PDF → markdown | `adapters/pdf-scanned.md` |
+| 音频/视频 → 文本 | `adapters/transcribe.md` |
+| 论文 → 文献管理器 | `adapters/paper-store.md` |
+| 小红书抓取 | `profiles/xiaohongshu.md`（含 opencli 调用细节） |
+| B站/微信/X 抓取 | `opencli <site>`，见各 profile |
 
 ## 交付形态（全分支统一）
 
-目录 `$INBOX_DIR/webclip/`（md）。论文 PDF 直接入 Zotero（zotero-cli import，inbox 不存 PDF）。
+目录 `$INBOX_DIR/webclip/`（md）。论文 PDF 入文献管理器（见 adapters/paper-store.md），inbox 不存 PDF。
 命名 `YYYY-MM-DD-webclip-<平台>-<主题>.md`。
 文件头：
 ```markdown
