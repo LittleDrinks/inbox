@@ -7,7 +7,7 @@
 
 ## 默认实现
 
-Logics-Parsing V3（vlm-pdf-extraction skill）。odl-pdf 失败时升级到本路径。
+Logics-Parsing V3（logics-parsing-v3 skill）。odl-pdf 失败时升级到本路径。
 
 ## 替换
 

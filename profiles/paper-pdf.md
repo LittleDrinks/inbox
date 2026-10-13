@@ -1,6 +1,6 @@
 # 论文 PDF profile
 
-触发：arXiv / ACL Anthology / OpenReview / HuggingFace Papers 链接，或纯文字论文标题。入库 Zotero → obsidian-research skill。
+触发：arXiv / ACL Anthology / OpenReview / HuggingFace Papers 链接，或纯文字论文标题。入库 Zotero → zotero-cli skill。
 
 ## venue URL 模式
 

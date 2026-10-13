@@ -22,7 +22,13 @@ yt-dlp 直连报 `HTTP 412`，opencli bilibili download 也卡在只下封面。
 
 ## 长音频转写（带时间戳）
 
-`~/.cache/sherpa-onnx/transcribe_ts.py`（SenseVoice int8 分块，`--chunk 30 --start/--end`，输出 `[HH:MM:SS] 文本`）。CPU ~2.5-3x 实时（100 分钟约 40 分钟），CPU 是标准路径 → `background=true, notify=true` 派后台。要精确定位先 30s 粒度定位，再 `--chunk 10` 二次细化。
+`~/.cache/sherpa-onnx/transcribe_ts.py`（SenseVoice int8 分块，`--chunk 30 --start/--end`，输出 `[HH:MM:SS] 文本`）。先验证 Python 可 import sherpa_onnx；Hermes 自带 Python 不等于转写环境，已有 `~/.venvs/transcribe/bin/python3` 可用。核对语言配置，英文用 en，不沿用 zh。长音频 `background=true, notify=true` 派后台；结束核对内部退出码、预期分块数和片尾，外层 shell 成功不代表转写成功。精确定位先 30s 粒度，再 `--chunk 10` 细化。
+
+## 原版字幕优先
+
+搬运访谈先搜索原版视频。YouTube 字幕先用 `opencli youtube transcript '<URL>' -f json`，参数查 --help。yt-dlp 或 player API 遇到 bot/LOGIN_REQUIRED 时，空 captionTracks 不能证明没有字幕。OpenCLI Chrome 与 browser_exec 登录态不同，Navigation rejected 不代表未登录，先 doctor。
+
+产品名和仓库归属用画面或官方仓库复核。字幕说话人标号可能错误，不机械归属观点。程序验证或数学证明不等于消除数据丢失等不可逆后果。
 
 ## 屏幕文字（PPT/slides）
 
