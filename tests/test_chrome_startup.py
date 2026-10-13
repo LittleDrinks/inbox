@@ -6,7 +6,7 @@ import unittest
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
-import xhs_opencli as backend
+import xhs_feed as backend
 
 TASKLIST = '/mnt/c/Windows/System32/tasklist.exe'
 CHROME = '/mnt/c/Program Files/Google/Chrome/Application/chrome.exe'
