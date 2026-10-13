@@ -4,7 +4,7 @@
 
 ## 三连（下载 → 音频转文字 → 抽帧）
 
-1. **下载**：来源 profile 负责（小红书 masterUrl 直链 / B站 __playinfo__ 音频流）
+1. **下载**：来源 profile 负责（小红书使用上游 OpenCLI download；B站见 bilibili.md）
 2. **音频转文字**（先拿全文，信息密度高于抽帧，纯 CPU）：
 ```bash
 ffmpeg -i input.mp4 -vn -acodec pcm_s16le -ar 16000 -ac 1 audio.wav
@@ -38,5 +38,5 @@ ffmpeg -pattern_type glob -i "frames/*.jpg" -filter_complex "tile=5x4:padding=4:
 
 - 区分"视频实际展示" vs "标题/文案称" vs "推断"，不脑补
 - 画面里的 URL/仓库名单次读取不可靠，验证后写
-- 小红书视频一律无字幕 → 默认就下载视频跑完整三连（音频转写 + 抽帧联系表 + 多模态分析），不再只存 desc + masterUrl +「未转录」。小红书视频多为几分钟以内，CPU 转写代价可接受；只在音频 >10 分钟（切段后仍慢）时先交付抽帧结果并把转写派后台补齐
+- 小红书视频按实际媒体决定处理：先验证视频与音轨；有讲话则转录，有独立画面信息则抽帧核对。无音轨/仅配乐记录依据，不凭平台假定字幕存在或不存在。CLI 标记 unsupported 时保留待补，不把封面或 desc 当视频内容。长音频切段并后台补齐。
 - B站长视频（>10 分钟）等重负载仍走 background+notify；100 分钟音频约 40 分钟 CPU

@@ -14,8 +14,8 @@ Hermes skill：把用户丢进来的链接/截图/文字路由到本地 inbox �
 
 ```bash
 git clone https://github.com/LittleDrinks/inbox.git ~/.hermes/skills/note-taking/inbox
-cp .env.example .env
-# 编辑 .env，设置 INBOX_DIR 为你的 inbox 路径（如 /mnt/e/OBSIDIAN/inbox）
+export INBOX_DIR=/mnt/e/OBSIDIAN/inbox
+# CLI 读取进程环境，不自动加载 .env。
 ```
 
 ## 结构
@@ -31,18 +31,21 @@ profiles/           # 按来源平台的抓取规则（通用，不含实现细�
   image.md          # 本地截图/图片
   video.md          # 视频文件/链接
 adapters/           # 依赖的契约与默认实现，换工具只改这里
-  xiaohongshu.md    # 小红书链接 → webclip md
   pdf-digital.md    # 数字版 PDF → markdown
   pdf-scanned.md    # 扫描版 PDF → markdown
   transcribe.md     # 音频/视频 → 文本
   paper-store.md    # 论文 → 文献管理器
 scripts/            # 可执行脚本，adapter 的默认实现
-  xhs_feed.py       # 小红书一键流水线
+  xhs_feed.py       # 单一入口：批量调用 OpenCLI、验收文件、写入原料
 ```
 
-## 换依赖
+## 小红书用法
 
-所有外部工具都通过 `adapters/` 解耦。每个文件定义输入→输出契约和默认实现。不用 Zotero？改 `adapters/paper-store.md`。本地跑不动 Logics Parser？改 `adapters/pdf-scanned.md` 换成你的 VLM 方案。不用 opencli 抓小红书？改 `adapters/xiaohongshu.md`。SKILL.md 不需要动。
+调用命令、浏览器启动、失败重试与消化规则只维护在 [profiles/xiaohongshu.md](profiles/xiaohongshu.md)。脚本复用官方 OpenCLI，不需要本地 noteId 补丁，不做断点续传。
+
+跨平台共用的 PDF、转录和文献管理工具说明保留在 `adapters/`，平台 profile 引用它们。
+
+检查：`python -B -m unittest discover -s tests -v`。
 
 ## 许可证
 
