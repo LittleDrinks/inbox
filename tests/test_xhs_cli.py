@@ -144,6 +144,56 @@ with patch('subprocess.run', side_effect=run), patch('subprocess.Popen', side_ef
         self.assertTrue((self.run_dir / old_body).exists())
         self.assertNotIn('partial', self.clip().read_text())
 
+    def test_status_and_resume_use_media_size_without_reading_media(self):
+        self.env['FIXTURE_MODE'] = 'video'
+        self.assertEqual(self.capture(media='all').returncode, 0)
+        files = self.item()['files']
+        for file in files:
+            path = self.run_dir / file['path']
+            self.assertEqual(file['size_bytes'], path.stat().st_size)
+            self.assertNotIn('sha256', file)
+        before = self.calls()
+        runner = '''
+import pathlib, runpy, sys
+from unittest.mock import patch
+sys.path.insert(0, str(pathlib.Path(sys.argv[1]).parent))
+original = pathlib.Path.open
+
+def guarded(path, *args, **kwargs):
+    if path.suffix in {'.mp4', '.jpg'}:
+        raise AssertionError('status/resume must not read media bytes')
+    return original(path, *args, **kwargs)
+
+with patch.object(pathlib.Path, 'open', guarded):
+    runpy.run_path(sys.argv.pop(1), run_name='__main__')
+'''
+        for command in ('status', 'resume'):
+            result = subprocess.run([sys.executable, '-c', runner, str(CLI), command,
+                                     '--run-dir', str(self.run_dir)], env=self.env,
+                                    capture_output=True, text=True, timeout=30)
+            self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.calls(), before)
+        path = self.run_dir / files[0]['path']
+        path.write_bytes(path.read_bytes()[:-1])
+        result = self.cli('status', '--run-dir', str(self.run_dir))
+        self.assertEqual(result.returncode, 1)
+        self.assertIn(files[0]['path'], json.loads(result.stdout)['missing_or_changed'])
+        self.assertEqual(self.resume().returncode, 0)
+
+    def test_legacy_media_hash_records_remain_readable(self):
+        import hashlib
+        self.assertEqual(self.capture(media='all').returncode, 0)
+        state = self.state()
+        file = state['items'][NID]['files'][0]
+        path = self.run_dir / file['path']
+        file.pop('size_bytes', None)
+        file['sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+        (self.run_dir / 'state.json').write_text(json.dumps(state))
+        before = self.calls()
+        self.assertEqual(self.cli('status', '--run-dir', str(self.run_dir)).returncode, 0)
+        self.assertEqual(self.resume().returncode, 0)
+        self.assertEqual(self.calls(), before)
+
     def test_missing_completed_media_retries_whole_note(self):
         self.assertEqual(self.capture(media='all').returncode, 0)
         original = self.item()['files'][0]['path']

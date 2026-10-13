@@ -318,7 +318,12 @@ def record(root, path):
 
 def intact(root, file):
     try:
-        return bool(file) and digest(safe_path(root, file['path'])) == file['sha256']
+        if not file:
+            return False
+        path = safe_path(root, file['path'])
+        if 'size_bytes' in file:
+            return path.is_file() and path.stat().st_size == file['size_bytes'] > 0
+        return digest(path) == file['sha256']  # Markdown/body and older schema-2 records.
     except (OSError, ValueError, KeyError):
         return False
 
@@ -392,7 +397,8 @@ def process(root, state):
                 output = attempt / 'output'
                 output.mkdir()
                 files = download(item['url'], item['note_id'], output)
-                item['files'] = [{**record(root, f['local']), 'index': f['index'], 'type': f['type']} for f in files]
+                item['files'] = [{'path': str(f['local'].relative_to(root)), 'size_bytes': f['local'].stat().st_size,
+                                  'index': f['index'], 'type': f['type']} for f in files]
                 item['media_status'] = 'complete'
             item['status'] = 'captured'
         except (CallUser, ValueError, OSError) as exc:
@@ -456,7 +462,7 @@ def main(argv=None):
     capture.add_argument('--input', required=True)
     capture.add_argument('--media', choices=['all', 'skip'], default='all')
     resume = sub.add_parser('resume', help='retry whole incomplete notes; skip intact completed notes')
-    status = sub.add_parser('status', help='offline hashes only; never calls OpenCLI')
+    status = sub.add_parser('status', help='offline file checks; never calls OpenCLI')
     for command in (capture, resume, status):
         command.add_argument('--run-dir', required=True)
     for command in (capture, resume):
