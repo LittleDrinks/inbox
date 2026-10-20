@@ -1,6 +1,6 @@
 # 小红书收藏
 
-小红书分享文字、短链或带签名链接统一交给 `scripts/ego_inbox.py xhs <URL>`。已弃用原有脆弱的 OpenCLI 桥接模式，全面使用 Windows 宿主原生的 **Ego-Lite 独立 Chromium 引擎**（TaskSpace 隔离运行，自动穿透设备指纹与风控验证）。
+小红书分享文字、短链或带签名链接统一交给 `scripts/ego_inbox.py xhs <URL>`，使用 Windows 宿主原生的 Ego-Lite 引擎（TaskSpace 隔离运行）。
 
 ## 调用
 

@@ -82,7 +82,7 @@ metadata:
 | 扫描版/公式 PDF → markdown | `adapters/pdf-scanned.md` |
 | 音频/视频 → 文本 | `adapters/transcribe.md` |
 | 论文 → 文献管理器 | `adapters/paper-store.md` |
-| 小红书抓取 | `profiles/xiaohongshu.md` (已全面升级为 Ego-Lite 原生引擎) |
+| 小红书抓取 | `profiles/xiaohongshu.md` |
 | B站/微信/X 抓取 | 见各 profile |
 
 ## 交付形态

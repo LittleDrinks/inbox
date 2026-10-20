@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Ego-Lite 原生驱动的 Inbox 抓取脚本。
-替代原有脆弱的扩展桥接模式，直接通过 Windows Ego-Lite 原生 Chromium 内核与 CDP 上下文抓取。
+通过 Windows Ego-Lite 原生 Chromium 内核与 CDP 上下文抓取。
 """
 
 import sys
