@@ -8,7 +8,7 @@ platforms: [linux, macos, windows]
 metadata:
   hermes:
     tags: [inbox, xiaohongshu, weixin, bilibili, x-twitter, webclip, capture, recall, router]
-    related_skills: [opencli-usage, opencli-browser, zotero-cli]
+    related_skills: [zotero-cli]
 ---
 
 # inbox：喂与取
@@ -52,7 +52,7 @@ metadata:
 - **paste 链**：用户连贴多次时 paste 文件互相引用（`Pasted text #N → file`），顺链追到底；说"全部"就全量，只说当前 N 条就只处理消息里的。
 - **事实分层**：区分"内容实际展示" vs "标题/文案称" vs "推断"。
 - **URL 验证**：OCR/画面读出的链接验证后才写进 md（如 GitHub API 返回 200），多次读取冲突以 API 为准。
-- **终端**：批量走脚本文件（terminal 工具拒绝 `&` 后台）；opencli 批量稳定模式是每条独立进程。
+- **终端**：批量走脚本文件（terminal 工具拒绝 `&` 后台）；批量稳定模式是每条独立进程。
 - **状态目录**：小红书原料、状态与媒体同存 inbox 内持久批次目录，见 `profiles/xiaohongshu.md`；其他工具临时缓存遵循运行环境 scratch 约定。
 
 ## 消化与 digest 硬规则
@@ -82,8 +82,8 @@ metadata:
 | 扫描版/公式 PDF → markdown | `adapters/pdf-scanned.md` |
 | 音频/视频 → 文本 | `adapters/transcribe.md` |
 | 论文 → 文献管理器 | `adapters/paper-store.md` |
-| 小红书抓取 | `profiles/xiaohongshu.md` |
-| B站/微信/X 抓取 | `opencli <site>`，见各 profile |
+| 小红书抓取 | `profiles/xiaohongshu.md` (已全面升级为 Ego-Lite 原生引擎) |
+| B站/微信/X 抓取 | 见各 profile |
 
 ## 交付形态
 
