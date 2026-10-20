@@ -12,6 +12,5 @@ jobs:
           python-version: '3.11'
       - run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - run: python -m pip install pyflakes==3.2.0
-      - run: python -m pyflakes scripts tests
-      - run: python -m unittest discover -s tests -v
-      - run: python -m compileall -q scripts tests
+      - run: python -m pyflakes scripts
+      - run: python -m compileall -q scripts

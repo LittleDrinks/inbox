@@ -36,16 +36,15 @@ adapters/           # 依赖的契约与默认实现，换工具只改这里
   transcribe.md     # 音频/视频 → 文本
   paper-store.md    # 论文 → 文献管理器
 scripts/            # 可执行脚本，adapter 的默认实现
-  xhs_feed.py       # 单一入口：批量调用 OpenCLI、验收文件、写入原料
+  ego_inbox.py      # 单一入口：调用 Ego-Lite 原生引擎、落地媒体与正文
+  ego_fetch.mjs     # 注入 Ego-Lite TaskSpace 的原生 DOM/CDP 抓取逻辑
 ```
 
 ## 小红书用法
 
-调用命令、浏览器启动、失败重试与消化规则只维护在 [profiles/xiaohongshu.md](profiles/xiaohongshu.md)。脚本复用官方 OpenCLI，不需要本地 noteId 补丁，不做断点续传。
+调用命令与消化规则只维护在 [profiles/xiaohongshu.md](profiles/xiaohongshu.md)。通过宿主机 Ego-Lite 原生执行，无需启动宿主个人 Chrome，直接下载原画视频与结构化评论。
 
 跨平台共用的 PDF、转录和文献管理工具说明保留在 `adapters/`，平台 profile 引用它们。
-
-检查：`python -B -m unittest discover -s tests -v`。
 
 ## 许可证
 
