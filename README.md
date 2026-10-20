@@ -40,12 +40,6 @@ scripts/            # 可执行脚本，adapter 的默认实现
   ego_fetch.mjs     # 注入 Ego-Lite TaskSpace 的原生 DOM/CDP 抓取逻辑
 ```
 
-## 小红书用法
-
-调用命令与消化规则只维护在 [profiles/xiaohongshu.md](profiles/xiaohongshu.md)。通过宿主机 Ego-Lite 原生执行，无需启动宿主个人 Chrome，直接下载原画视频与结构化评论。
-
-跨平台共用的 PDF、转录和文献管理工具说明保留在 `adapters/`，平台 profile 引用它们。
-
 ## 许可证
 
 MIT
