@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 """
-Ego-Lite 原生驱动的 Inbox 抓取脚本。
-通过 Windows Ego-Lite 原生 Chromium 内核与 CDP 上下文抓取。
+Ego-Lite 原生驱动的 Inbox 抓取与下载脚本。
+通过 Windows Ego-Lite 原生 Chromium 内核与 CDP 上下文抓取，并落地媒体与评论。
 """
 
 import sys
 import json
 import os
 import subprocess
-import time
 from pathlib import Path
 
 EGO_BIN = "/mnt/c/Program Files/Citro Labs/ego lite/Application/0.6.0.16/ego-browser.exe"
@@ -31,7 +30,6 @@ def run_ego_fetch(mode: str, url: str, options: dict = None) -> dict:
         "options": options
     }
 
-    # 动态生成包含固定路径的执行脚本，规避 Windows 环境变量传递丢失
     script_content = f"""
 import {{ readFileSync, writeFileSync }} from 'node:fs';
 
@@ -58,14 +56,13 @@ try {{
   let data = {{}};
 
   if (mode === 'xhs') {{
-    if (options.withComments) {{
-      for (let i = 0; i < (options.commentScrolls || 3); i++) {{
-        await page.evaluate(() => window.scrollBy(0, 1000));
-        await page.waitForTimeout(1000);
-      }}
+    // 默认滚动加载评论（3~4次）
+    for (let i = 0; i < (options.commentScrolls || 4); i++) {{
+      await page.evaluate(() => window.scrollBy(0, 1000));
+      await page.waitForTimeout(1000);
     }}
 
-    data = await page.evaluate((withComments) => {{
+    data = await page.evaluate(() => {{
       const state = window.__INITIAL_STATE__;
       const noteMap = state?.note?.noteDetailMap || {{}};
       const firstKey = Object.keys(noteMap)[0];
@@ -94,19 +91,18 @@ try {{
         }}
       }}
 
+      // 提取评论
       let comments = [];
-      if (withComments) {{
-        const commentItems = document.querySelectorAll('.comment-item, [class*="comment-item"]');
-        commentItems.forEach(el => {{
-          const cAuthor = el.querySelector('.author, .user-name, [class*="author"], [class*="name"]')?.innerText?.trim();
-          const cContent = el.querySelector('.content, .note-text, [class*="content"]')?.innerText?.trim();
-          const cDate = el.querySelector('.date, [class*="date"]')?.innerText?.trim();
-          const cLike = el.querySelector('.like, [class*="like"]')?.innerText?.trim();
-          if (cContent && !comments.some(item => item.content === cContent && item.author === cAuthor)) {{
-            comments.push({{ author: cAuthor, content: cContent, date: cDate, like: cLike }});
-          }}
-        }});
-      }}
+      const commentItems = document.querySelectorAll('.comment-item, [class*="comment-item"]');
+      commentItems.forEach(el => {{
+        const cAuthor = el.querySelector('.author, .user-name, [class*="author"], [class*="name"]')?.innerText?.trim();
+        const cContent = el.querySelector('.content, .note-text, [class*="content"]')?.innerText?.trim();
+        const cDate = el.querySelector('.date, [class*="date"]')?.innerText?.trim();
+        const cLike = el.querySelector('.like, [class*="like"]')?.innerText?.trim();
+        if (cContent && !comments.some(item => item.content === cContent && item.author === cAuthor)) {{
+          comments.push({{ author: cAuthor, content: cContent, date: cDate, like: cLike }});
+        }}
+      }});
 
       return {{
         type: videoUrls.length > 0 ? 'video' : 'normal',
@@ -118,7 +114,7 @@ try {{
         videoUrls,
         comments
       }};
-    }}, Boolean(options.withComments));
+    }});
 
   }} else if (mode === 'wechat') {{
     data = await page.evaluate(() => {{
@@ -159,7 +155,7 @@ try {{
 
   writeFileSync(outputPath, JSON.stringify({{ ok: true, data }}, null, 2), 'utf8');
 }} catch (err) {{
-  writeFileSync(outputPath, JSON.stringify({{ ok: false, error: err.message }}), 'utf8');
+  writeFileSync(outputPath, JSON.stringify({{ ok: false, error: err.message }}, null, 2), 'utf8');
 }} finally {{
   await completeTaskSpace(task.spaceId, {{ keep: false }});
 }}
@@ -194,23 +190,49 @@ try {{
                 except Exception:
                     pass
 
+def download_file(url: str, out_path: Path):
+    cmd = ["curl", "-x", "", "--connect-timeout", "10", "--max-time", "60", "--retry", "2", "-L", "-s", "-o", str(out_path), url]
+    subprocess.run(cmd, check=True)
+
 def main():
     if len(sys.argv) < 3:
-        print("Usage: ego_inbox.py <xhs|wechat|bilibili> <url> [--comments]")
+        print("Usage: ego_inbox.py <xhs|wechat|bilibili> <url> [--out-dir <dir>]")
         sys.exit(1)
 
     mode = sys.argv[1]
     url = sys.argv[2]
-    with_comments = "--comments" in sys.argv
+    
+    out_dir = None
+    if "--out-dir" in sys.argv:
+        idx = sys.argv.index("--out-dir")
+        if idx + 1 < len(sys.argv):
+            out_dir = Path(sys.argv[idx + 1])
 
-    print(f"[*] 启动 Ego-Lite 原生引擎抓取: [{mode}] {url} ...")
-    res = run_ego_fetch(mode, url, {"withComments": with_comments})
-
+    res = run_ego_fetch(mode, url)
     if not res.get("ok"):
         print(f"[!] 抓取失败: {res.get('error')}", file=sys.stderr)
         sys.exit(1)
 
     data = res["data"]
+
+    # 若指定落盘目录，自动下载视频、图片与评论
+    if out_dir:
+        out_dir.mkdir(parents=True, exist_ok=True)
+        # 1. 评论与元数据保存为 note.json
+        (out_dir / "note.json").write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+        
+        # 2. 默认下载最高画质视频
+        video_urls = data.get("videoUrls", [])
+        if video_urls:
+            best_video = video_urls[-1]["url"]
+            download_file(best_video, out_dir / "video.mp4")
+
+        # 3. 默认下载图片
+        images = data.get("images", [])
+        for i, img_url in enumerate(images):
+            ext = ".webp" if "webp" in img_url else ".jpg"
+            download_file(img_url, out_dir / f"image_{i+1}{ext}")
+
     print(json.dumps(data, ensure_ascii=False, indent=2))
 
 if __name__ == "__main__":
